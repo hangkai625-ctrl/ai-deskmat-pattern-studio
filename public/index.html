@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GPT-Image-2 画图</title>
+    <link rel="stylesheet" href="/styles.css?v=text2img-img2img-20260505" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">✦</div>
+        <span>GPT-Image-2 画图</span>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="stage" aria-label="AI image generation workspace">
+        <div id="emptyState" class="empty-state">
+          <div class="empty-icon" aria-hidden="true"><span></span></div>
+          <p>暂无任务，在下方输入提示词开始创作吧</p>
+        </div>
+        <div id="resultGrid" class="result-grid" aria-label="Generated results"></div>
+        <div id="status" class="status-line" aria-live="polite"></div>
+      </section>
+
+      <section class="composer-wrap" aria-label="Prompt composer">
+        <form id="designForm" class="composer">
+          <div class="toolbar">
+            <div class="mode-switch" role="radiogroup" aria-label="生成模式">
+              <label><input type="radio" name="generationMode" value="text2img" checked /><span>文生图</span></label>
+              <label><input type="radio" name="generationMode" value="img2img" /><span>图生图</span></label>
+            </div>
+
+            <select id="size" class="chip-select" aria-label="Image size">
+              <option value="2048x1152">2K 横屏 (2048x1152)</option>
+              <option value="3840x2160">4K 横屏 (3840x2160)</option>
+              <option value="2048x2048">2K 方图 (2048x2048)</option>
+              <option value="1024x1024">1:1 (1024x1024)</option>
+              <option value="1536x1024">3:2 (1536x1024)</option>
+            </select>
+
+            <select id="quality" class="chip-select compact" aria-label="Quality">
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="auto">Auto</option>
+            </select>
+
+            <select id="count" class="chip-select compact" aria-label="Image count">
+              <option value="1">1 张</option>
+              <option value="2">2 张</option>
+              <option value="3">3 张</option>
+              <option value="4">4 张</option>
+            </select>
+
+            <button id="openTokenSettings" class="upload-btn" type="button">⚙ 令牌</button>
+            <button id="randomize" class="upload-btn" type="button">🎲 随机</button>
+            <button id="exportPng" class="upload-btn" type="button">💾 导出</button>
+          </div>
+
+          <div id="referenceDropzone" class="reference-dropzone">
+            <div>
+              <strong>参考图（可选）</strong>
+              <span>可直接选择、拖入或粘贴图片</span>
+            </div>
+            <input id="referenceImage" type="file" accept="image/*" aria-label="参考图" />
+          </div>
+
+          <div id="referencePreview" class="reference-preview" hidden>
+            <img id="referenceThumb" alt="Reference image" />
+            <span id="referenceName"></span>
+            <button id="clearReference" type="button">清除</button>
+          </div>
+
+          <div class="prompt-box">
+            <textarea id="prompt" rows="3" placeholder="描述想要生成的画面...（支持多行）"></textarea>
+            <button class="send-btn" type="submit" aria-label="Generate"><span>➤</span></button>
+          </div>
+
+          <div class="hidden-fields" aria-hidden="true">
+            <input id="primaryColor" type="color" value="#18b7ff" />
+            <input id="secondaryColor" type="color" value="#ff4f9a" />
+            <input id="backgroundColor" type="color" value="#f4f1e8" />
+            <input id="keywords" type="text" />
+            <input id="usage" type="text" />
+            <input id="density" type="range" min="1" max="100" value="58" />
+            <input id="brightness" type="range" min="70" max="130" value="100" />
+            <input id="contrast" type="range" min="70" max="140" value="100" />
+            <input id="saturation" type="range" min="40" max="160" value="100" />
+            <output id="densityValue">58</output>
+            <output id="brightnessValue">100</output>
+            <output id="contrastValue">100</output>
+            <output id="saturationValue">100</output>
+          </div>
+        </form>
+      </section>
+
+      <aside class="side-panel" aria-label="Generation info">
+        <div>
+          <p class="panel-title">生成历史</p>
+          <div id="historyList" class="history-list"></div>
+        </div>
+        <div>
+          <p class="panel-title">Prompt</p>
+          <p id="promptPreview">生成后会显示本次 AI 提示词。</p>
+        </div>
+      </aside>
+
+      <dialog id="tokenDialog" class="token-dialog">
+        <form method="dialog" class="token-card">
+          <div>
+            <h2>设置中转站 API Key</h2>
+            <p>Key 只保存在你的浏览器本地，生成时由后端转发请求。</p>
+          </div>
+          <label class="token-field">
+            <span>API Key</span>
+            <input id="apiTokenInput" type="password" autocomplete="off" placeholder="sk-..." />
+          </label>
+          <div class="token-actions">
+            <button id="clearToken" class="small-btn" value="cancel" type="button">清除</button>
+            <button class="small-btn" value="cancel">取消</button>
+            <button id="saveToken" class="primary-mini" value="default" type="button">保存</button>
+          </div>
+        </form>
+      </dialog>
+    </main>
+
+    <script src="/app.js?v=text2img-img2img-20260505" type="module"></script>
+  </body>
+</html>
