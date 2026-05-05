@@ -4,11 +4,6 @@ const statusLine = document.querySelector("#status");
 const historyList = document.querySelector("#historyList");
 const promptPreview = document.querySelector("#promptPreview");
 const resultGrid = document.querySelector("#resultGrid");
-const tokenDialog = document.querySelector("#tokenDialog");
-const apiTokenInput = document.querySelector("#apiTokenInput");
-const openTokenSettings = document.querySelector("#openTokenSettings");
-const saveToken = document.querySelector("#saveToken");
-const clearToken = document.querySelector("#clearToken");
 const referenceImageInput = document.querySelector("#referenceImage");
 const referencePreview = document.querySelector("#referencePreview");
 const referenceThumb = document.querySelector("#referenceThumb");
@@ -53,8 +48,6 @@ const zh = {
   useImage: "切换到这张生成图",
   download: "下载",
   use: "选用",
-  tokenSaved: "令牌已保存，现在可以生成图像。",
-  tokenCleared: "已清除本地令牌。",
   referenceLoaded: "已添加参考图，可以进行图生图。",
   referenceCleared: "已移除参考图。",
   referenceTooLarge: "参考图不要超过 25MB。",
@@ -94,7 +87,6 @@ function getInput() {
     count: Number(fields.count.value),
     size: fields.size.value,
     quality: fields.quality.value,
-    apiToken: localStorage.getItem("mookoApiToken") || "",
     referenceImage: mode === "img2img" ? referenceImageData : ""
   };
 }
@@ -285,9 +277,6 @@ async function compressReferenceImage(file) {
 form.addEventListener("submit", generateDesign);
 document.querySelector("#randomize").addEventListener("click", randomize);
 document.querySelector("#exportPng").addEventListener("click", exportActiveImage);
-openTokenSettings.addEventListener("click", () => { apiTokenInput.value = localStorage.getItem("mookoApiToken") || ""; tokenDialog.showModal(); });
-saveToken.addEventListener("click", () => { const token = apiTokenInput.value.trim(); if (token) { localStorage.setItem("mookoApiToken", token); setStatus(zh.tokenSaved); } tokenDialog.close(); });
-clearToken.addEventListener("click", () => { localStorage.removeItem("mookoApiToken"); apiTokenInput.value = ""; setStatus(zh.tokenCleared); tokenDialog.close(); });
 referenceImageInput.addEventListener("change", () => handleReferenceFile(referenceImageInput.files?.[0]));
 referenceDropzone.addEventListener("dragover", (event) => { event.preventDefault(); referenceDropzone.classList.add("is-dragover"); });
 referenceDropzone.addEventListener("dragleave", () => referenceDropzone.classList.remove("is-dragover"));
