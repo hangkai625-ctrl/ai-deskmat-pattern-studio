@@ -4,7 +4,28 @@ import { extname, join, normalize } from "node:path";
 
 const root = process.cwd();
 const publicDir = join(root, "public");
-const port = Number(process.env.PORT || 5173);
+
+async function loadDotEnv() {
+  try {
+    const content = await readFile(join(root, ".env"), "utf8");
+    for (const line of content.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const separator = trimmed.indexOf("=");
+      if (separator === -1) continue;
+      const key = trimmed.slice(0, separator).trim();
+      const value = trimmed.slice(separator + 1).trim().replace(/^["']|["']$/g, "");
+      if (key && process.env[key] === undefined) process.env[key] = value;
+    }
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+}
+
+await loadDotEnv();
+
+const port = Number(process.env.PORT || 3000);
+const host = process.env.HOST || "0.0.0.0";
 const imageApiUrl = process.env.IMAGE_API_URL || "https://api.mooko.ai/v1/images/generations";
 const imageEditApiUrl = process.env.IMAGE_EDIT_API_URL || "https://api.mooko.ai/v1/images/edits";
 const imageModel = process.env.IMAGE_MODEL || "gpt-image-2-pro";
@@ -12,7 +33,7 @@ const imageSize = process.env.IMAGE_SIZE || "2048x1152";
 const imageQuality = process.env.IMAGE_QUALITY || "high";
 const imageModeration = process.env.IMAGE_MODERATION || "auto";
 const imageResponseFormat = process.env.IMAGE_RESPONSE_FORMAT || "b64_json";
-const appVersion = "text2img-img2img-20260505";
+const appVersion = "lan-only-20260505";
 
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
@@ -26,10 +47,7 @@ const mimeTypes = {
 };
 
 function sendJson(response, status, payload) {
-  response.writeHead(status, {
-    "Content-Type": "application/json; charset=utf-8",
-    "Cache-Control": "no-store"
-  });
+  response.writeHead(status, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
   response.end(JSON.stringify(payload));
 }
 
@@ -43,9 +61,7 @@ async function readRequestBody(request) {
   let body = "";
   for await (const chunk of request) {
     body += chunk;
-    if (body.length > 1024 * 1024 * 32) {
-      throw new Error("The request is too large. Please shorten the prompt or reference image.");
-    }
+    if (body.length > 1024 * 1024 * 32) throw new Error("The request is too large. Please shorten the prompt or reference image.");
   }
   return JSON.parse(body || "{}");
 }
@@ -96,9 +112,9 @@ async function generateImages(request, response) {
     return;
   }
 
-  const apiKey = String(input.apiToken || "").trim() || process.env.IMAGE_API_TOKEN || process.env.OPENAI_API_KEY;
+  const apiKey = process.env.IMAGE_API_TOKEN || process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    sendJson(response, 500, { error: "Missing IMAGE_API_TOKEN. Set it on the server or in the web UI token dialog." });
+    sendJson(response, 500, { error: "服务端缺少 IMAGE_API_TOKEN。请把 API Key 写入公司内网服务器的 .env 文件后重启。" });
     return;
   }
 
@@ -209,6 +225,7 @@ const server = createServer((request, response) => {
   response.end("Method not allowed");
 });
 
-server.listen(port, () => {
-  console.log(`AI deskmat pattern studio ${appVersion} running at http://localhost:${port}`);
+server.listen(port, host, () => {
+  console.log(`AI deskmat pattern studio ${appVersion} running at http://${host}:${port}`);
+  console.log(`LAN users can visit http://<this-computer-lan-ip>:${port}`);
 });
