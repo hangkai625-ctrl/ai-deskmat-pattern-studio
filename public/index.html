@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GPT-Image-2 画图</title>
-    <link rel="stylesheet" href="/styles.css?v=text2img-img2img-20260505" />
+    <link rel="stylesheet" href="/styles.css?v=lan-only-20260505" />
   </head>
   <body>
     <header class="topbar">
@@ -53,9 +53,8 @@
               <option value="4">4 张</option>
             </select>
 
-            <button id="openTokenSettings" class="upload-btn" type="button">⚙ 令牌</button>
-            <button id="randomize" class="upload-btn" type="button">🎲 随机</button>
-            <button id="exportPng" class="upload-btn" type="button">💾 导出</button>
+            <button id="randomize" class="upload-btn" type="button">随机</button>
+            <button id="exportPng" class="upload-btn" type="button">导出</button>
           </div>
 
           <div id="referenceDropzone" class="reference-dropzone">
@@ -105,26 +104,8 @@
           <p id="promptPreview">生成后会显示本次 AI 提示词。</p>
         </div>
       </aside>
-
-      <dialog id="tokenDialog" class="token-dialog">
-        <form method="dialog" class="token-card">
-          <div>
-            <h2>设置中转站 API Key</h2>
-            <p>Key 只保存在你的浏览器本地，生成时由后端转发请求。</p>
-          </div>
-          <label class="token-field">
-            <span>API Key</span>
-            <input id="apiTokenInput" type="password" autocomplete="off" placeholder="sk-..." />
-          </label>
-          <div class="token-actions">
-            <button id="clearToken" class="small-btn" value="cancel" type="button">清除</button>
-            <button class="small-btn" value="cancel">取消</button>
-            <button id="saveToken" class="primary-mini" value="default" type="button">保存</button>
-          </div>
-        </form>
-      </dialog>
     </main>
 
-    <script src="/app.js?v=text2img-img2img-20260505" type="module"></script>
+    <script src="/app.js?v=lan-only-20260505" type="module"></script>
   </body>
 </html>
